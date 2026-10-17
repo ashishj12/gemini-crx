@@ -1,0 +1,13 @@
+# Build-only preparation. Artifact Registry repository must already exist.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, apps/api/Dockerfile, -t, '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/relay-api:${_TAG}', .]
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, apps/web/Dockerfile, -t, '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/relay-web:${_TAG}', .]
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/relay-api:${_TAG}'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/relay-web:${_TAG}'
+substitutions:
+  _TAG: v2
+  _REGION: us-central1
+  _REPOSITORY: relay

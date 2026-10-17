@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "pythonTests": {
+    "passed": 78,
+    "failed": 0
+  },
+  "mandatoryScenarios": {
+    "passed": 8,
+    "checks": 160
+  },
+  "liveGemini": {
+    "status": "PASS",
+    "model": "gemini-3.5-flash",
+    "workflowStages": 5
+  },
+  "containers": "PASS",
+  "cleanExtractedInstall": "PASS",
+  "frontend": {
+    "tests": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "evidence": "clean-verification.json"
+  },
+  "launcher": "PASS",
+  "clientSecretScan": "PASS",
+  "demoVideo": "EXCLUDED_BY_USER",
+  "cloudDeployment": "NOT_EXECUTED",
+  "independentQualificationScore": "NOT_ASSIGNED"
+}

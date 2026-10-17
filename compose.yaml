@@ -1,0 +1,58 @@
+services:
+  enterprise:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ["python", "-m", "relay_mock"]
+    environment:
+      MOCK_HOST: 0.0.0.0
+      MOCK_ALLOW_FAILURES: ${MOCK_ALLOW_FAILURES:-true}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [backend]
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      APP_MODE: ${APP_MODE:-REVIEWER}
+      ENTERPRISE_API_BASE_URL: http://enterprise:8090
+      DATABASE_PATH: /app/data/relay.sqlite
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      AI_TIMEOUT: ${AI_TIMEOUT:-40}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://127.0.0.1:3000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    volumes: ["cx-data:/app/data"]
+    depends_on:
+      enterprise:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [backend, egress]
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      RELAY_API_URL: http://api:8080
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [backend, egress]
+    restart: unless-stopped
+volumes:
+  cx-data:
+networks:
+  backend:
+    internal: true
+  egress:

@@ -1,0 +1,16 @@
+**/node_modules
+**/.next
+**/__pycache__
+**/*.pyc
+.git
+.venv
+.local
+.pytest_cache
+.ruff_cache
+.env
+.env.*
+!.env.example
+release
+evidence
+**/*.mp4
+**/*.sqlite*
